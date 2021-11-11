@@ -1,7 +1,8 @@
 /* See LICENSE file for copyright and license details. */
+#include "X11/XF86keysym.h"
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
@@ -25,8 +26,8 @@ static const unsigned int borderalpha = 0xd0;
 
 static const char *colors[][3]      = {
     /*               fg               bg                 border   */
-    [SchemeNorm] = { col_gruvbox_fg0, col_gruvbox_bg0,   col_gruvbox_purple },
-    [SchemeSel]  = { col_gruvbox_fg,  col_gruvbox_bg0_h, col_gruvbox_purple_dark },
+    [SchemeNorm] = { col_gruvbox_fg0, col_gruvbox_bg0,   col_gruvbox_purple_dark },
+    [SchemeSel]  = { col_gruvbox_fg,  col_gruvbox_bg0_h, col_gruvbox_yellow },
 };
 
 /* tagging */
@@ -39,7 +40,7 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	// { "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
@@ -70,6 +71,11 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gruvbox_bg0_h, "-nf", col_gruvbox_fg, "-sb", col_gruvbox_purple_dark, "-sf", col_gruvbox_fg0, NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *vimcmd[]  = { "gvim", NULL };
+static const char *brightness_up_cmd[]    = { "xbacklight", "-inc", "5", NULL };
+static const char *brightness_down_cmd[]    = { "xbacklight", "-dec", "5", NULL };
+static const char *audio_toggle_cmd[]    = { "amixer", "-q", "sset", "Master", "toggle", NULL };
+static const char *audio_up_cmd[]    = { "amixer", "-q", "sset", "Master", "5%+", NULL };
+static const char *audio_down_cmd[]    = { "amixer", "-q", "sset", "Master", "5%-", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -107,6 +113,11 @@ static Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ 0,          XF86XK_MonBrightnessUp,      spawn,          {.v = brightness_up_cmd} },
+	{ 0,        XF86XK_MonBrightnessDown,      spawn,          {.v = brightness_down_cmd} },
+	{ 0,         XF86XK_AudioRaiseVolume,     spawn,          {.v = audio_up_cmd} },
+	{ 0,         XF86XK_AudioLowerVolume,     spawn,          {.v = audio_down_cmd} },
+	{ 0,                 XF86XK_AudioMute,     spawn,          {.v = audio_toggle_cmd} },
 };
 
 /* button definitions */
